@@ -13,19 +13,13 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ df281f67-3690-40ce-b02a-6436112c6a19
-begin
-	using Pkg;
-	with_terminal() do
-		Pkg.status()
-	end
-end
-
-# ╔═╡ 8371ceeb-1df8-471a-8ea9-f54d14f31145
-Pkg.add("StatsBase")
-
 # ╔═╡ 017e361d-0770-48b5-8b46-62af5153b913
-using Images, FileIO, PlutoUI, Plots, StatsBase
+using Pkg, Images, FileIO, PlutoUI, Plots, BenchmarkTools
+
+# ╔═╡ df281f67-3690-40ce-b02a-6436112c6a19
+with_terminal() do
+	Pkg.status()
+end
 
 # ╔═╡ 20a59115-5237-4b97-909f-784ea48bd1ca
 
@@ -70,42 +64,36 @@ end
 invert.(img)
 
 # ╔═╡ e5c8131d-2215-4d01-ade6-c63b50cb2c80
-@bind gamma_correction Slider(0.2:0.2:2.0, show_value=true, default = 1.0)
+@bind gamma_correction Slider(-2.0:0.5:3.0, show_value=true, default = 0.0)
 
 # ╔═╡ 86a81dca-68eb-4085-80c2-436e4e55ef6f
-img_gamma_ajusted = adjust_histogram( img, GammaCorrection(gamma = gamma_correction))
+img_gamma_ajusted = adjust_histogram( img, GammaCorrection(gamma = exp(gamma_correction)))
 
-# ╔═╡ d1014b55-ffe9-4cf8-b763-71dc46e1cbf9
-begin
-	img_adjusted = img_gamma_ajusted
-	reds = vec(float.(red.(img_adjusted)))
-	greens = vec(float.(green.(img_adjusted)))
-	blues = vec(float.(blue.(img_adjusted)))
-
-	histogram(reds, legend = false, bins = 64, linecolor = :red)
-	histogram!(greens, legend = false, bins = 64, linecolor = :green)
-	histogram!(blues, legend = false, bins = 64, linecolor = :blue)
+# ╔═╡ dd794041-3651-45d9-b060-b112b89b15c8
+function image_histogram(image)
+	_, reds = build_histogram(channelview(image)[1,:,:], 64; minval=0, maxval=1)
+	_, greens = build_histogram(channelview(image)[2,:,:], 64; minval=0, maxval=1)
+	_, blues = build_histogram(channelview(image)[3,:,:], 64; minval=0, maxval=1)
+	plot(reds, linecolor = :red, legend = false)
+	plot!(greens, linecolor = :green, legend = false)
+	plot!(blues, linecolor = :blue, legend = false)
 end
 
-# ╔═╡ ae8f8aef-aee1-4b53-bf33-ae3db2e689f8
+# ╔═╡ 012fbd20-9d25-4d56-a5a8-c2f839b7b517
+image_histogram(img_gamma_ajusted)
+
+# ╔═╡ 005041e9-9458-4c8e-bb8f-af9405b1158a
+@benchmark image_histogram(img)
+
+# ╔═╡ 1672bfba-6413-4d55-9f03-9612a2151c3d
 
 
-# ╔═╡ 719fce1b-2217-4adb-8509-f92176bb42e8
-
-
-# ╔═╡ 39800845-e24f-4dc0-af92-77d927ab5817
-
-
-# ╔═╡ 9113e24c-7102-4155-a0e7-1fc4b531a68f
-
-
-# ╔═╡ e8d9eac6-e3a9-412e-beb9-e86eb5b62be3
+# ╔═╡ 45889ab1-d1c4-4259-ae34-9c00fa4f5be0
 
 
 # ╔═╡ Cell order:
-# ╠═df281f67-3690-40ce-b02a-6436112c6a19
 # ╠═017e361d-0770-48b5-8b46-62af5153b913
-# ╠═8371ceeb-1df8-471a-8ea9-f54d14f31145
+# ╠═df281f67-3690-40ce-b02a-6436112c6a19
 # ╠═20a59115-5237-4b97-909f-784ea48bd1ca
 # ╟─69410e25-d555-45e6-adb2-eab16cf2d98f
 # ╠═a367fff7-407c-45de-8555-9584d68e8f2c
@@ -118,9 +106,8 @@ end
 # ╠═9b5bccea-2f25-4c50-a69a-0e86aa061c45
 # ╠═86a81dca-68eb-4085-80c2-436e4e55ef6f
 # ╠═e5c8131d-2215-4d01-ade6-c63b50cb2c80
-# ╠═d1014b55-ffe9-4cf8-b763-71dc46e1cbf9
-# ╠═ae8f8aef-aee1-4b53-bf33-ae3db2e689f8
-# ╠═719fce1b-2217-4adb-8509-f92176bb42e8
-# ╠═39800845-e24f-4dc0-af92-77d927ab5817
-# ╠═9113e24c-7102-4155-a0e7-1fc4b531a68f
-# ╠═e8d9eac6-e3a9-412e-beb9-e86eb5b62be3
+# ╠═012fbd20-9d25-4d56-a5a8-c2f839b7b517
+# ╠═dd794041-3651-45d9-b060-b112b89b15c8
+# ╠═005041e9-9458-4c8e-bb8f-af9405b1158a
+# ╠═1672bfba-6413-4d55-9f03-9612a2151c3d
+# ╠═45889ab1-d1c4-4259-ae34-9c00fa4f5be0
