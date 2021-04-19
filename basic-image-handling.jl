@@ -66,14 +66,19 @@ invert.(img)
 # ╔═╡ e5c8131d-2215-4d01-ade6-c63b50cb2c80
 @bind gamma_correction Slider(-2.0:0.5:3.0, show_value=true, default = 0.0)
 
-# ╔═╡ 86a81dca-68eb-4085-80c2-436e4e55ef6f
-img_gamma_ajusted = adjust_histogram( img, GammaCorrection(gamma = exp(gamma_correction)))
+# ╔═╡ f9f7c010-a1f1-4569-941a-e10281d27746
+function gamma_adjusted(image) 
+	adjust_histogram(image, GammaCorrection(gamma = exp(gamma_correction)))
+end
 
-# ╔═╡ dd794041-3651-45d9-b060-b112b89b15c8
+# ╔═╡ 86a81dca-68eb-4085-80c2-436e4e55ef6f
+img_gamma_ajusted = gamma_adjusted(img)
+
+# ╔═╡ 45889ab1-d1c4-4259-ae34-9c00fa4f5be0
 function image_histogram(image)
-	_, reds = build_histogram(channelview(image)[1,:,:], 64; minval=0, maxval=1)
-	_, greens = build_histogram(channelview(image)[2,:,:], 64; minval=0, maxval=1)
-	_, blues = build_histogram(channelview(image)[3,:,:], 64; minval=0, maxval=1)
+	_, reds = build_histogram(red.(image), 64; minval=0, maxval=1)
+	_, greens = build_histogram(green.(image), 64; minval=0, maxval=1)
+	_, blues = build_histogram(blue.(image), 64; minval=0, maxval=1)
 	plot(reds, linecolor = :red, legend = false)
 	plot!(greens, linecolor = :green, legend = false)
 	plot!(blues, linecolor = :blue, legend = false)
@@ -85,11 +90,8 @@ image_histogram(img_gamma_ajusted)
 # ╔═╡ 005041e9-9458-4c8e-bb8f-af9405b1158a
 @benchmark image_histogram(img)
 
-# ╔═╡ 1672bfba-6413-4d55-9f03-9612a2151c3d
-
-
-# ╔═╡ 45889ab1-d1c4-4259-ae34-9c00fa4f5be0
-
+# ╔═╡ 1fd235d0-aee1-495b-8834-c111a7db99c0
+@benchmark gamma_adjusted(img)
 
 # ╔═╡ Cell order:
 # ╠═017e361d-0770-48b5-8b46-62af5153b913
@@ -105,9 +107,9 @@ image_histogram(img_gamma_ajusted)
 # ╠═79635ec3-44ec-4fdb-ab88-659cc8911877
 # ╠═9b5bccea-2f25-4c50-a69a-0e86aa061c45
 # ╠═86a81dca-68eb-4085-80c2-436e4e55ef6f
+# ╠═f9f7c010-a1f1-4569-941a-e10281d27746
 # ╠═e5c8131d-2215-4d01-ade6-c63b50cb2c80
 # ╠═012fbd20-9d25-4d56-a5a8-c2f839b7b517
-# ╠═dd794041-3651-45d9-b060-b112b89b15c8
-# ╠═005041e9-9458-4c8e-bb8f-af9405b1158a
-# ╠═1672bfba-6413-4d55-9f03-9612a2151c3d
 # ╠═45889ab1-d1c4-4259-ae34-9c00fa4f5be0
+# ╠═005041e9-9458-4c8e-bb8f-af9405b1158a
+# ╠═1fd235d0-aee1-495b-8834-c111a7db99c0
