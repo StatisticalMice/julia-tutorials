@@ -7,6 +7,13 @@ using InteractiveUtils
 # ╔═╡ ca5c5876-f27d-4ca0-9f0a-abae66c31929
 using CSV, DataFrames, HTTP
 
+# ╔═╡ 308026c7-b055-4478-9bbe-67bb0e3ff65a
+begin
+	ENV["DATADEPS_ALWAYS_ACCEPT"] = true
+	using PalmerPenguins
+	penguins = dropmissing(DataFrame(PalmerPenguins.load()))
+end
+
 # ╔═╡ 4c4a83eb-b5c1-402a-921a-3b2cd99eec7e
 using SplitApplyPlot, CairoMakie
 
@@ -22,14 +29,6 @@ md"""
 md"""
 This is a gentle and lighthearted tutorial on how to use tools from SplitApplyPlot, using as example dataset a collection of measurements on penguins[1]. See the Palmer penguins website for more information.
 """
-
-# ╔═╡ 4a02b144-a733-11eb-04d8-ed001c6d957b
-begin
-	url = "https://cdn.jsdelivr.net/gh/allisonhorst/palmerpenguins@433439c8b013eff3d36c847bb7a27fa0d7e353d8/inst/extdata/penguins.csv"
-	
-	penguins = dropmissing(CSV.read(HTTP.get(url).body, DataFrame, missingstring="NA"))
-	first(penguins, 6)
-end
 
 # ╔═╡ e4cd739b-b12c-48ec-b778-ff19ea4ac976
 md"""
@@ -263,7 +262,7 @@ end
 # ╟─e690586a-149d-494b-947a-71b1a336b9a4
 # ╟─da412c9e-3c78-4006-a4ca-ea822db3fea1
 # ╠═ca5c5876-f27d-4ca0-9f0a-abae66c31929
-# ╠═4a02b144-a733-11eb-04d8-ed001c6d957b
+# ╠═308026c7-b055-4478-9bbe-67bb0e3ff65a
 # ╟─e4cd739b-b12c-48ec-b778-ff19ea4ac976
 # ╟─a32252c7-e228-4c70-bbdf-f89043c8e21c
 # ╠═4c4a83eb-b5c1-402a-921a-3b2cd99eec7e
