@@ -210,18 +210,18 @@ let
 	ax1.yticks = 30:5:60
 	
 	@chain penguins begin
-		@where(:species .== "Adelie")
+		@where :species .== "Adelie"
 		@with scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Adelie"]...)
 	end
 	
 	@chain penguins begin
-		@where(:species .== "Chinstrap")
+		@where :species .== "Chinstrap"
 		@with scatter!(ax1, :flipper_length_mm, :bill_length_mm;
 			style["Chinstrap"]...)
 	end
 
 	@chain penguins begin
-		@where(:species .== "Gentoo")
+		@where :species .== "Gentoo"
 		@with scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Gentoo"]...)
 	end
 
