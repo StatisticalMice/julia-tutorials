@@ -14,11 +14,12 @@ begin
         Pkg.PackageSpec(name="GLMakie", version="0.2"),
         Pkg.PackageSpec(name="CairoMakie", version="0.4"),
         Pkg.PackageSpec(name="DataFrames", version="1"),
+        Pkg.PackageSpec(name="DataFramesMeta", version="0.6"),
         Pkg.PackageSpec(name="Chain", version="0.4"),
         Pkg.PackageSpec(name="PalmerPenguins", version="0.1"),
     ])
 	
-    using PlutoUI, GLMakie, CairoMakie, DataFrames, Chain, PalmerPenguins
+    using PlutoUI, GLMakie, CairoMakie, DataFrames, Chain, PalmerPenguins, DataFramesMeta
 end
 
 # ╔═╡ 5a547c3d-91ae-40d6-bb5b-4063663d934c
@@ -192,6 +193,50 @@ let
 	fig
 end
 
+# ╔═╡ 623bbe9d-c73e-4390-bd17-59e1734b2e51
+md"""
+Plotting one species at a time by using filter() and @chain, plus using DataFramesMeta.jl.
+"""
+
+# ╔═╡ 376e46c7-8c19-41cf-b54d-5f2f749d5c69
+let
+	CairoMakie.activate!()
+	
+	fig = Figure(resolution = (1000, 700))
+	ax1 = fig[1, 1] = Axis(fig, 
+		title = "Flipper and bill length",
+		xlabel="Flipper length (mm)", 
+		ylabel="Bill length (mm)")
+	ax1.xticks = 160:10:240
+	ax1.yticks = 30:5:60
+	
+	@chain penguins begin
+		@where(:species .== "Adelie")
+		@with _ begin
+			scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Adelie"]...)
+		end
+	end
+	
+	@chain penguins begin
+		@where(:species .== "Chinstrap")
+		@with _ begin
+			scatter!(ax1, :flipper_length_mm, :bill_length_mm;
+				style["Chinstrap"]...)
+		end
+	end
+
+	@chain penguins begin
+		@where(:species .== "Gentoo")
+		@with _ begin
+			scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Gentoo"]...)
+		end
+	end
+
+	axislegend("Species", position = :rb)
+	
+	fig
+end
+
 # ╔═╡ Cell order:
 # ╟─5a547c3d-91ae-40d6-bb5b-4063663d934c
 # ╟─5f11a9cb-8e79-4ff5-a556-7e23ffe6a9ac
@@ -203,8 +248,10 @@ end
 # ╟─d5463461-e423-42fc-bb79-9ca68ed04715
 # ╠═d650356c-9bb7-41cf-82f4-f62d1c2d0d56
 # ╟─0fbb46dd-b198-489a-a648-5b0468e1e6f8
-# ╠═d6896864-73bd-4021-a166-d88a062a6293
+# ╟─d6896864-73bd-4021-a166-d88a062a6293
 # ╟─9f5d001f-e02c-4157-84b5-98f54528c97c
-# ╠═0e3dd7e4-aa23-4a32-a127-ea22b978f2e0
+# ╟─0e3dd7e4-aa23-4a32-a127-ea22b978f2e0
 # ╟─29535b0e-62da-4235-b50e-61376362c507
-# ╠═77fcdbe4-7058-4fa4-a2b9-b72ea5f540d0
+# ╟─77fcdbe4-7058-4fa4-a2b9-b72ea5f540d0
+# ╟─623bbe9d-c73e-4390-bd17-59e1734b2e51
+# ╟─376e46c7-8c19-41cf-b54d-5f2f749d5c69
