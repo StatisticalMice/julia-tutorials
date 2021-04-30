@@ -60,7 +60,6 @@ set_theme!(Theme(
 	),
 ))
 
-
 # ╔═╡ d5463461-e423-42fc-bb79-9ca68ed04715
 md"""
 Set some species related attributes; these will be used by splatting them on the plotting function.
@@ -212,24 +211,18 @@ let
 	
 	@chain penguins begin
 		@where(:species .== "Adelie")
-		@with _ begin
-			scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Adelie"]...)
-		end
+		@with scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Adelie"]...)
 	end
 	
 	@chain penguins begin
 		@where(:species .== "Chinstrap")
-		@with _ begin
-			scatter!(ax1, :flipper_length_mm, :bill_length_mm;
-				style["Chinstrap"]...)
-		end
+		@with scatter!(ax1, :flipper_length_mm, :bill_length_mm;
+			style["Chinstrap"]...)
 	end
 
 	@chain penguins begin
 		@where(:species .== "Gentoo")
-		@with _ begin
-			scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Gentoo"]...)
-		end
+		@with scatter!(ax1, :flipper_length_mm, :bill_length_mm; style["Gentoo"]...)
 	end
 
 	axislegend("Species", position = :rb)
