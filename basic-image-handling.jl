@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.2
+# v0.14.7
 
 using Markdown
 using InteractiveUtils
@@ -13,16 +13,26 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 017e361d-0770-48b5-8b46-62af5153b913
-using Pkg, Images, FileIO, PlutoUI, Plots, BenchmarkTools
-
-# ╔═╡ df281f67-3690-40ce-b02a-6436112c6a19
-with_terminal() do
-	Pkg.status()
+# ╔═╡ a08ba54c-b0ec-4aa8-b4ba-f289a1e8a8a5
+begin
+    import Pkg
+    Pkg.activate(mktempdir())
+	
+    Pkg.add([
+        Pkg.PackageSpec(name="Images", version="0.24"),
+        Pkg.PackageSpec(name="FileIO", version="1"),
+        Pkg.PackageSpec(name="PlutoUI", version="0.7"),
+        Pkg.PackageSpec(name="Plots", version="1"),
+        Pkg.PackageSpec(name="BenchmarkTools", version="1"),
+    ])
+	
+    using Images, FileIO, PlutoUI, Plots, BenchmarkTools
 end
 
-# ╔═╡ 20a59115-5237-4b97-909f-784ea48bd1ca
-
+# ╔═╡ b389844f-72ab-47b8-bab8-f2d5c23253bc
+md"""
+# Basic image handling with Images.jl
+"""
 
 # ╔═╡ 69410e25-d555-45e6-adb2-eab16cf2d98f
 md"""
@@ -94,9 +104,8 @@ image_histogram(img_gamma_ajusted)
 @benchmark gamma_adjusted(img)
 
 # ╔═╡ Cell order:
-# ╠═017e361d-0770-48b5-8b46-62af5153b913
-# ╠═df281f67-3690-40ce-b02a-6436112c6a19
-# ╠═20a59115-5237-4b97-909f-784ea48bd1ca
+# ╟─b389844f-72ab-47b8-bab8-f2d5c23253bc
+# ╠═a08ba54c-b0ec-4aa8-b4ba-f289a1e8a8a5
 # ╟─69410e25-d555-45e6-adb2-eab16cf2d98f
 # ╠═a367fff7-407c-45de-8555-9584d68e8f2c
 # ╠═a1296b34-b033-412c-be10-7ca88faa3fdc
