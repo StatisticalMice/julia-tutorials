@@ -42,7 +42,7 @@ Photo by @thiszun (follow me on IG, FB) from Pexels
 """
 
 # ╔═╡ a367fff7-407c-45de-8555-9584d68e8f2c
-img = load("Woman Wearing White Floral Off Shoulder Top.jpg")
+img = load(joinpath("resources", "Woman Wearing White Floral Off Shoulder Top.jpg"))
 
 # ╔═╡ a1296b34-b033-412c-be10-7ca88faa3fdc
 head = img[700:2000, 600:1600]
