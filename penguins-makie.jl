@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.7
+# v0.14.8
 
 using Markdown
 using InteractiveUtils
@@ -15,9 +15,11 @@ begin
         Pkg.PackageSpec(name="DataFramesMeta", version="0.6"),
         Pkg.PackageSpec(name="Chain", version="0.4"),
         Pkg.PackageSpec(name="CairoMakie", version="0.5"),
+        Pkg.PackageSpec(name="Colors", version="0.12"),
+        Pkg.PackageSpec(name="Makie", version="0.13"),
     ])
 	
-    using PalmerPenguins, DataFrames, DataFramesMeta, Chain, CairoMakie
+    using PalmerPenguins, DataFrames, DataFramesMeta, Chain, CairoMakie, Colors, Makie
 end
 
 # ╔═╡ 5a547c3d-91ae-40d6-bb5b-4063663d934c
@@ -28,8 +30,6 @@ md"""
 # ╔═╡ 5f11a9cb-8e79-4ff5-a556-7e23ffe6a9ac
 md"""
 This notebook illustrates how to plot PalmerPenguins.jl with a few different combinations of DataFrames.jl, DataFramesMeta.jl, Chain.jl, CairoMakie.jl.
-
-This notebook does not use AoG.
 """
 
 # ╔═╡ ec127dae-d2ac-42a6-9de6-948feee8c338
@@ -60,6 +60,15 @@ set_theme!(Theme(
 	),
 ))
 
+# ╔═╡ 7c22bf6b-cfcc-4d2f-99e5-6a449ff9f957
+begin
+	# These colors are from https://allisonhorst.github.io/palmerpenguins/
+	adeliecolor = colorant"#FC7808"
+	chinstrapcolor = colorant"#8C00EC"
+	gentoocolor = colorant"#107A78"
+	(adeliecolor, chinstrapcolor, gentoocolor)
+end
+
 # ╔═╡ d5463461-e423-42fc-bb79-9ca68ed04715
 md"""
 Set some species related attributes; these will be used by splatting them on the plotting function.
@@ -68,24 +77,24 @@ Set some species related attributes; these will be used by splatting them on the
 # ╔═╡ d650356c-9bb7-41cf-82f4-f62d1c2d0d56
 style = Dict(
 	"Adelie" => (
-		color=(:orange,0.5),  
-		strokecolor=:orange,
+		color=(adeliecolor,0.7),  
+		strokecolor=adeliecolor,
 		label="Adelie",
 		marker=:circle, 
 		markersize=20
 	),
 	"Chinstrap" => (
-		color=(:slateblue1,0.5),  
-		strokecolor=:slateblue1,
+		color=(chinstrapcolor,0.7),  
+		strokecolor=chinstrapcolor,
 		label="Chinstrap", 
 		marker=:utriangle, 
 		markersize=20
 	),
 	"Gentoo" => (
-		color=(:turquoise3,0.5), 
-		strokecolor=:turquoise3,
+		color=(gentoocolor,0.7), 
+		strokecolor=gentoocolor,
 		label="Gentoo", 
-		marker=:diamond, 
+		marker=:rect, 
 		markersize=20
 	)
 );
@@ -125,7 +134,7 @@ let
 			style["Gentoo"]...)
 	end
 
-	axislegend("Gentoo", position = :rb)
+	axislegend("Penguin species", position = :rb)
 	
 	fig
 end
@@ -204,6 +213,7 @@ end
 # ╠═a46310e3-53d1-4bab-8b7c-b4bef16efcc9
 # ╟─94f1ce39-a43e-4f25-9c4c-683509861d46
 # ╠═836fd8dd-f920-4975-a6a0-47da575b3eb7
+# ╠═7c22bf6b-cfcc-4d2f-99e5-6a449ff9f957
 # ╟─d5463461-e423-42fc-bb79-9ca68ed04715
 # ╠═d650356c-9bb7-41cf-82f4-f62d1c2d0d56
 # ╟─0fbb46dd-b198-489a-a648-5b0468e1e6f8
