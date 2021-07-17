@@ -58,33 +58,6 @@ begin
 	draw(penguin_bill; axis)
 end
 
-# ╔═╡ 7c42a8b6-0823-4c2e-8d81-53884582c0f1
-let
-	colors = colorschemes[:Paired_3]
-	penguin_bill = data(penguins) * mapping(:bill_length_mm, :flipper_length_mm) * mapping(color = :species)
-	draw(penguin_bill; axis, palettes=(color=colors))
-end
-
-# ╔═╡ 59393c4e-6c3b-4d5b-8879-0b77c9657392
-begin
-	x=repeat(1:20, inner=20)
-	y=repeat(1:20, outer=20)
-	u=cos.(x)
-	v=sin.(y)
-	c=rand(Bool, length(x))
-	d=rand(Bool, length(x))
-	df = (; x, y, u, v, c, d)
-	#colors = [colorant"#E24A33", colorant"#348ABD"]
-	colors = colorschemes[:Paired_3][1:2]
-	heads = ['▲', '●']
-	plt = data(df) *
-	    mapping(:x, :y, :u, :v) *
-	    mapping(arrowhead=:c => nonnumeric) *
-	    mapping(arrowcolor=:d => nonnumeric) *
-	    visual(Arrows, arrowsize=10, lengthscale=0.3)
-	draw(plt; palettes=(arrowcolor=colors, arrowhead=heads))
-end
-
 # ╔═╡ 7e445b8e-25ee-43cb-94e0-da2e53a73fe9
 
 
@@ -1221,8 +1194,6 @@ version = "3.5.0+0"
 # ╠═34609920-486b-43ea-82a1-2c5c6642056d
 # ╠═59b450e8-8a99-4a29-a6d5-d36980a5e3b2
 # ╠═134afff2-6ee9-40ff-8d88-213d67f5938d
-# ╠═7c42a8b6-0823-4c2e-8d81-53884582c0f1
-# ╠═59393c4e-6c3b-4d5b-8879-0b77c9657392
 # ╠═7e445b8e-25ee-43cb-94e0-da2e53a73fe9
 # ╠═2bacc10f-fd20-4ebb-a8eb-fe15194d51aa
 # ╠═68b9d6cf-c1ee-42b1-9f9c-7022fca060ec
