@@ -15,7 +15,7 @@ end
 
 # ╔═╡ a08ba54c-b0ec-4aa8-b4ba-f289a1e8a8a5
 begin
-    using Images, FileIO, PlutoUI, Plots, BenchmarkTools
+    using Images, FileIO, PlutoUI, Plots
 end
 
 # ╔═╡ b389844f-72ab-47b8-bab8-f2d5c23253bc
@@ -23,11 +23,26 @@ md"""
 # Basic image handling with Images.jl
 """
 
+# ╔═╡ f68b8caf-a7b8-4fb5-8cef-f2fa697a9f22
+md"""
+This notebook shows how to load images from disk, selecting the R/G/B color components, gamma correction, and displaying an RGB histogram.
+
+**Images.jl** is an image processing package that's written in Julia.
+
+**FileIO.jl** provides 'load' and 'save'. It will try to infer the file's type, and to find a package that's capable of loading the file.
+
+**PlutoUI.jl** add Pluto UI components. In this notebook it's used to add a gamma correction slider.
+
+**Plots.jl** is one of the main plotting packages. It's used to display an RGB histogram of the gamma corrected image.
+
+This notebook is done with **Pluto.jl**.
+"""
+
 # ╔═╡ 69410e25-d555-45e6-adb2-eab16cf2d98f
 md"""
-[Woman Wearing White Floral Off Shoulder Top](https://www.pexels.com/photo/woman-wearing-white-floral-off-shoulder-top-3653167/)
+The following image is by @thiszun and was downloaded from Pexels:
 
-Photo by @thiszun (follow me on IG, FB) from Pexels
+[Woman Wearing White Floral Off Shoulder Top](https://www.pexels.com/photo/woman-wearing-white-floral-off-shoulder-top-3653167/).
 """
 
 # ╔═╡ a367fff7-407c-45de-8555-9584d68e8f2c
@@ -42,11 +57,30 @@ size(img)
 # ╔═╡ 183f1ee9-7032-4ab0-b73d-d94c75a4c27b
 typeof(img)
 
+# ╔═╡ 12ddb2c5-85a6-4419-bc6a-5ec050f97a7e
+md"""
+The image is represented as a two dimensional Array of RGB numbers.
+
+"The N0f8 type (aliased to Normed{UInt8,8}) is represented internally by a UInt8, and makes 0x00 equivalent to 0.0 and 0xff to 1.0," according to **FixedPointNumbers.jl**. 
+
+In other words, each of the R/G/B components of a pixes is an 8-bit unsigned integer that represents a floating point number.
+"""
+
 # ╔═╡ 2ce72842-b7ac-4ad7-8527-9793c45d83a7
 let
 	gray_image = Gray.(head)
 	mosaicview(head, gray_image; nrow = 1)
 end
+
+# ╔═╡ c1038010-6f92-4fd5-a5fd-a5578a39b6f5
+md"""
+> Gray.(head) 
+This applies the function Gray() to each of the pixels in head. 
+This is called broadcasting.
+
+> mosaicview(head, gray_image; nrow = 1) 
+This calls the function mosaicview() with two normal parameters, and one named parameter, e.g. nrow = 1. The named parameters are separated with the ";" character.
+"""
 
 # ╔═╡ c2e53aa1-e91f-469e-848c-67bebecaa444
 mosaicview( 
@@ -54,10 +88,27 @@ mosaicview(
 	(x->RGB(0, x, 0)).(green.(head)),
 	(x->RGB(0, 0, x)).(blue.(head)) ; nrow = 1)
 
+# ╔═╡ 60fbe058-64c8-4222-b140-6a7c2ebf0a17
+md"""
+> (x->RGB(x, 0, 0)).(red.(head))
+Is read as follows:
+> x->RGB(x, 0, 0)
+defines an anonymous function that takes the parameter 'x' and returns the RGB color where the first parameter, red, is 'x', and the rest of the colors are '0'.
+> red.(head)
+returns the red component of 'head' pixels using broadcasting.
+> (x->RGB(x, 0, 0)).(red.(head))
+applies the anonymous function with broadcasting to the red values of the all the pixels.
+"""
+
 # ╔═╡ 79635ec3-44ec-4fdb-ab88-659cc8911877
 function invert(color::AbstractRGB)
 	return RGB(1.0-red(color),1.0-green(color),1.0-blue(color))
 end
+
+# ╔═╡ 5d0ae940-2509-498d-a8ab-404c03587b0f
+md"""
+As red(color) is a floating point number, its inverted color is 1.0-red(color).
+"""
 
 # ╔═╡ 9b5bccea-2f25-4c50-a69a-0e86aa061c45
 invert.(img)
@@ -86,23 +137,15 @@ end
 # ╔═╡ 012fbd20-9d25-4d56-a5a8-c2f839b7b517
 image_histogram(img_gamma_ajusted)
 
-# ╔═╡ 005041e9-9458-4c8e-bb8f-af9405b1158a
-@benchmark image_histogram(img)
-
-# ╔═╡ 1fd235d0-aee1-495b-8834-c111a7db99c0
-@benchmark gamma_adjusted(img)
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-BenchmarkTools = "~1.1.1"
 FileIO = "~1.10.1"
 Images = "~0.24.1"
 Plots = "~1.19.2"
@@ -151,12 +194,6 @@ version = "0.4.3"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[BenchmarkTools]]
-deps = ["JSON", "Logging", "Printf", "Statistics", "UUIDs"]
-git-tree-sha1 = "c31ebabde28d102b602bada60ce8922c266d205b"
-uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "1.1.1"
 
 [[Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1308,22 +1345,25 @@ version = "0.9.1+5"
 
 # ╔═╡ Cell order:
 # ╟─b389844f-72ab-47b8-bab8-f2d5c23253bc
+# ╟─f68b8caf-a7b8-4fb5-8cef-f2fa697a9f22
 # ╠═a08ba54c-b0ec-4aa8-b4ba-f289a1e8a8a5
 # ╟─69410e25-d555-45e6-adb2-eab16cf2d98f
 # ╠═a367fff7-407c-45de-8555-9584d68e8f2c
 # ╠═a1296b34-b033-412c-be10-7ca88faa3fdc
 # ╠═8d9c4fbf-11c7-420b-8aea-c9f50ef204aa
 # ╠═183f1ee9-7032-4ab0-b73d-d94c75a4c27b
+# ╟─12ddb2c5-85a6-4419-bc6a-5ec050f97a7e
 # ╠═2ce72842-b7ac-4ad7-8527-9793c45d83a7
+# ╟─c1038010-6f92-4fd5-a5fd-a5578a39b6f5
 # ╠═c2e53aa1-e91f-469e-848c-67bebecaa444
+# ╟─60fbe058-64c8-4222-b140-6a7c2ebf0a17
 # ╠═79635ec3-44ec-4fdb-ab88-659cc8911877
+# ╟─5d0ae940-2509-498d-a8ab-404c03587b0f
 # ╠═9b5bccea-2f25-4c50-a69a-0e86aa061c45
 # ╠═86a81dca-68eb-4085-80c2-436e4e55ef6f
 # ╠═f9f7c010-a1f1-4569-941a-e10281d27746
 # ╠═e5c8131d-2215-4d01-ade6-c63b50cb2c80
 # ╠═012fbd20-9d25-4d56-a5a8-c2f839b7b517
 # ╠═45889ab1-d1c4-4259-ae34-9c00fa4f5be0
-# ╠═005041e9-9458-4c8e-bb8f-af9405b1158a
-# ╠═1fd235d0-aee1-495b-8834-c111a7db99c0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
