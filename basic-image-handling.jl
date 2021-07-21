@@ -25,17 +25,17 @@ md"""
 
 # ╔═╡ f68b8caf-a7b8-4fb5-8cef-f2fa697a9f22
 md"""
-This notebook shows how to load images from disk, selecting the R/G/B color components, gamma correction, and displaying an RGB histogram.
+This notebook shows how to load images from disk, select RGB color components, do gamma correction, and display an RGB histogram.
 
-**Images.jl** is an image processing package that's written in Julia.
+`Images.jl` is an image processing package that's written in Julia.
 
-**FileIO.jl** provides 'load' and 'save'. It will try to infer the file's type, and to find a package that's capable of loading the file.
+`FileIO.jl` provides file loading (and saving). It will try to infer the file's type, and to find a package that's capable of loading the file.
 
-**PlutoUI.jl** add Pluto UI components. In this notebook it's used to add a gamma correction slider.
+`PlutoUI.jl` add Pluto UI components. In this notebook it's used to add a gamma correction slider.
 
-**Plots.jl** is one of the main plotting packages. It's used to display an RGB histogram of the gamma corrected image.
+`Plots.jl` is one of the main plotting packages. It's used to display an RGB histogram of the gamma corrected image.
 
-This notebook is done with **Pluto.jl**.
+This notebook is done with `Pluto.jl`.
 """
 
 # ╔═╡ 69410e25-d555-45e6-adb2-eab16cf2d98f
@@ -61,9 +61,9 @@ typeof(img)
 md"""
 The image is represented as a two dimensional Array of RGB numbers.
 
-"The N0f8 type (aliased to Normed{UInt8,8}) is represented internally by a UInt8, and makes 0x00 equivalent to 0.0 and 0xff to 1.0," according to **FixedPointNumbers.jl**. 
+"The N0f8 type (aliased to Normed{UInt8,8}) is represented internally by a UInt8, and makes 0x00 equivalent to 0.0 and 0xff to 1.0," according to `FixedPointNumbers.jl`. 
 
-In other words, each of the R/G/B components of a pixes is an 8-bit unsigned integer that represents a floating point number.
+In other words, each of the RGB components of the pixels is an 8-bit unsigned integer that represents a floating point number between 0.0 and 1.0.
 """
 
 # ╔═╡ 2ce72842-b7ac-4ad7-8527-9793c45d83a7
@@ -74,12 +74,9 @@ end
 
 # ╔═╡ c1038010-6f92-4fd5-a5fd-a5578a39b6f5
 md"""
-> Gray.(head) 
-This applies the function Gray() to each of the pixels in head. 
-This is called broadcasting.
+`Gray.(head)` applies the function `Gray()` to each of the pixels in `head`. This is called broadcasting. Without the dot, e.g. `Gray(head)`, Julia would try to find a function that takes as the input the whole image.
 
-> mosaicview(head, gray_image; nrow = 1) 
-This calls the function mosaicview() with two normal parameters, and one named parameter, e.g. nrow = 1. The named parameters are separated with the ";" character.
+`mosaicview(head, gray_image; nrow = 1)` calls the function `mosaicview()` with two normal parameters, and one named parameter, e.g. `nrow = 1`. The named parameters are separated with the `;` character.
 """
 
 # ╔═╡ c2e53aa1-e91f-469e-848c-67bebecaa444
@@ -90,14 +87,13 @@ mosaicview(
 
 # ╔═╡ 60fbe058-64c8-4222-b140-6a7c2ebf0a17
 md"""
-> (x->RGB(x, 0, 0)).(red.(head))
-Is read as follows:
-> x->RGB(x, 0, 0)
-defines an anonymous function that takes the parameter 'x' and returns the RGB color where the first parameter, red, is 'x', and the rest of the colors are '0'.
-> red.(head)
-returns the red component of 'head' pixels using broadcasting.
-> (x->RGB(x, 0, 0)).(red.(head))
-applies the anonymous function with broadcasting to the red values of the all the pixels.
+`(x->RGB(x, 0, 0)).(red.(head))` is read as follows:
+
+`x->RGB(x, 0, 0)` defines an anonymous function that takes the parameter `x` and returns the RGB color where the first parameter, red, is `x`, and the rest of the colors are `0`.
+
+`red.(head)` returns the red component of `head` pixels using broadcasting.
+
+`(x->RGB(x, 0, 0)).(red.(head))` applies the anonymous function with broadcasting to the red values of the all the pixels. The result is the red component of the image.
 """
 
 # ╔═╡ 79635ec3-44ec-4fdb-ab88-659cc8911877
@@ -107,11 +103,19 @@ end
 
 # ╔═╡ 5d0ae940-2509-498d-a8ab-404c03587b0f
 md"""
-As red(color) is a floating point number, its inverted color is 1.0-red(color).
+As `red(color)` is a floating point number, its inverted color is `1.0-red(color)`.
 """
 
 # ╔═╡ 9b5bccea-2f25-4c50-a69a-0e86aa061c45
 invert.(img)
+
+# ╔═╡ c7c3827b-7d57-4e1e-bccb-bb4074ef8c43
+typeof(invert.(img))
+
+# ╔═╡ 4829f153-98c8-4765-a031-d22646f8ab7a
+md"""
+Note that Julia converted each pixel's color value to `Float64` in this case.
+"""
 
 # ╔═╡ e5c8131d-2215-4d01-ade6-c63b50cb2c80
 @bind gamma_correction Slider(-2.0:0.5:3.0, show_value=true, default = 0.0)
@@ -123,6 +127,20 @@ end
 
 # ╔═╡ 86a81dca-68eb-4085-80c2-436e4e55ef6f
 img_gamma_ajusted = gamma_adjusted(img)
+
+# ╔═╡ e6de7425-3353-4873-8cf5-14b689f2ed19
+md"""
+Pluto/HTML doesn't support a slider where the slider's value would be exponentially rising. Therefore, the slider has the range `-2.0:0.5:3.0`, and it's used in gamma correction as `GammaCorrection(gamma = exp(gamma_correction))`.
+
+"""
+
+# ╔═╡ dfb78be2-f7b0-48c8-a81e-08d668034c48
+collect(-2.0:0.5:3.0)
+
+# ╔═╡ ab5b1cbc-0048-490d-9306-9f0432884696
+md"""
+The range expression represent a list of values starting at `-2.0`, incrementing by `0.5`, and ending at `3.0`.
+"""
 
 # ╔═╡ 45889ab1-d1c4-4259-ae34-9c00fa4f5be0
 function image_histogram(image)
@@ -1360,10 +1378,15 @@ version = "0.9.1+5"
 # ╠═79635ec3-44ec-4fdb-ab88-659cc8911877
 # ╟─5d0ae940-2509-498d-a8ab-404c03587b0f
 # ╠═9b5bccea-2f25-4c50-a69a-0e86aa061c45
+# ╠═c7c3827b-7d57-4e1e-bccb-bb4074ef8c43
+# ╟─4829f153-98c8-4765-a031-d22646f8ab7a
 # ╠═86a81dca-68eb-4085-80c2-436e4e55ef6f
 # ╠═f9f7c010-a1f1-4569-941a-e10281d27746
 # ╠═e5c8131d-2215-4d01-ade6-c63b50cb2c80
 # ╠═012fbd20-9d25-4d56-a5a8-c2f839b7b517
+# ╟─e6de7425-3353-4873-8cf5-14b689f2ed19
+# ╠═dfb78be2-f7b0-48c8-a81e-08d668034c48
+# ╟─ab5b1cbc-0048-490d-9306-9f0432884696
 # ╠═45889ab1-d1c4-4259-ae34-9c00fa4f5be0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
