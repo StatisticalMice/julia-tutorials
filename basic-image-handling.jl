@@ -25,7 +25,13 @@ md"""
 
 # ╔═╡ f68b8caf-a7b8-4fb5-8cef-f2fa697a9f22
 md"""
-This notebook shows how to load images from disk, select RGB color components, do gamma correction, and display an RGB histogram.
+This notebook shows some operations you can perform on images. We download an image from the net, inspect its data type, make the image grayscale, split the image to RGB components, gamma adjust the image, and display the RGB histogram.
+
+This is the first part of a series of blog posts illustrating tasks you may want to do with Julia. I've added some explanations of what the code is doing, and I hope the result is readable with general knowledge of programming languages like Python.
+
+I recommend finding a way to run the Pluto notebook(s) interactively. Hopefully at some point in the near future this is possible directly on the web, but before that happens, you may need to download the notebook, and run Julia on your laptop.
+
+The most recent version of this notebook is in [this GitHub repo](https://github.com/StatisticalMice/julia-tutorials/blob/main/basic-image-handling.jl).
 
 `Images.jl` is an image processing package that's written in Julia.
 
@@ -38,15 +44,36 @@ This notebook shows how to load images from disk, select RGB color components, d
 This notebook is done with `Pluto.jl`.
 """
 
-# ╔═╡ 69410e25-d555-45e6-adb2-eab16cf2d98f
+# ╔═╡ f679ddee-7646-41c2-a56e-30b27d89a5cc
 md"""
-The following image is by @thiszun and was downloaded from Pexels:
+We'll download this example image by @thiszun from Pexels:
 
 [Woman Wearing White Floral Off Shoulder Top](https://www.pexels.com/photo/woman-wearing-white-floral-off-shoulder-top-3653167/).
 """
 
-# ╔═╡ a367fff7-407c-45de-8555-9584d68e8f2c
-img = load(joinpath("resources", "Woman Wearing White Floral Off Shoulder Top.jpg"))
+# ╔═╡ 47fc092d-a639-4433-b6a2-084cd48ebb86
+imageurl_with_extra = "https://images.pexels.com/photos/3653167/pexels-photo-3653167.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+
+# ╔═╡ 28a4deb6-0b0b-4e03-9ddc-83c8e5be179c
+md"""
+The URL has extra parts starting with `?`, which we remove.
+
+The code takes the first element of the array returned by `split`, which is at index `1`.
+
+It then converts the type `SubString{String}` to type `String` so that download will work, without this there will be an error.
+"""
+
+# ╔═╡ e23fb803-328a-4205-8cd3-8132e67e3dc8
+imageurl = String(split(imageurl_with_extra, "?")[1])
+
+# ╔═╡ b98152a1-fb56-4616-982d-b79699534d46
+imagepath = download(imageurl)
+
+# ╔═╡ 4ffc0f24-904a-4906-bdc1-12ae434ce43b
+img = load(imagepath)
+
+# ╔═╡ 9dad94a8-0629-4655-b097-f045a9ab0eaa
+size(img)
 
 # ╔═╡ a1296b34-b033-412c-be10-7ca88faa3fdc
 head = img[700:2000, 600:1600]
@@ -61,7 +88,7 @@ typeof(img)
 md"""
 The image is represented as a two dimensional Array of RGB numbers.
 
-"The N0f8 type (aliased to Normed{UInt8,8}) is represented internally by a UInt8, and makes 0x00 equivalent to 0.0 and 0xff to 1.0," according to `FixedPointNumbers.jl`. 
+"The `N0f8` type (aliased to `Normed{UInt8,8}`) is represented internally by a `UInt8`, and makes `0x00` equivalent to `0.0` and `0xff` to `1.0`," according to `FixedPointNumbers.jl`. 
 
 In other words, each of the RGB components of the pixels is an 8-bit unsigned integer that represents a floating point number between 0.0 and 1.0.
 """
@@ -118,7 +145,9 @@ Note that Julia converted each pixel's color value to `Float64` in this case.
 """
 
 # ╔═╡ e5c8131d-2215-4d01-ade6-c63b50cb2c80
-@bind gamma_correction Slider(-2.0:0.5:3.0, show_value=true, default = 0.0)
+@bind gamma_correction Slider(-2.0:0.5:3.0, show_value=true, default = -1.0)
+# The default is -1.0 so that the notebook shows a difference to the original image.
+# In the interactive version of this you can drag the slider.
 
 # ╔═╡ f9f7c010-a1f1-4569-941a-e10281d27746
 function gamma_adjusted(image) 
@@ -1365,8 +1394,13 @@ version = "0.9.1+5"
 # ╟─b389844f-72ab-47b8-bab8-f2d5c23253bc
 # ╟─f68b8caf-a7b8-4fb5-8cef-f2fa697a9f22
 # ╠═a08ba54c-b0ec-4aa8-b4ba-f289a1e8a8a5
-# ╟─69410e25-d555-45e6-adb2-eab16cf2d98f
-# ╠═a367fff7-407c-45de-8555-9584d68e8f2c
+# ╟─f679ddee-7646-41c2-a56e-30b27d89a5cc
+# ╠═47fc092d-a639-4433-b6a2-084cd48ebb86
+# ╟─28a4deb6-0b0b-4e03-9ddc-83c8e5be179c
+# ╠═e23fb803-328a-4205-8cd3-8132e67e3dc8
+# ╠═b98152a1-fb56-4616-982d-b79699534d46
+# ╠═4ffc0f24-904a-4906-bdc1-12ae434ce43b
+# ╠═9dad94a8-0629-4655-b097-f045a9ab0eaa
 # ╠═a1296b34-b033-412c-be10-7ca88faa3fdc
 # ╠═8d9c4fbf-11c7-420b-8aea-c9f50ef204aa
 # ╠═183f1ee9-7032-4ab0-b73d-d94c75a4c27b
